@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Submit 40 Essential Records</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 700px;
+      margin: 40px auto;
+      padding: 0 20px;
+      background-color: #51b5d6;
+    }
+
+    form {
+      background: #fff;
+      padding: 24px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      font-size: 26px;
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-weight: bold;
+      margin-top: 20px;
+      display: block;
+    }
+
+    input[type="text"],
+    input[type="email"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      margin-top: 6px;
+      box-sizing: border-box;
+    }
+
+    .entry {
+      margin-top: 20px;
+      padding: 16px;
+      background: #f9f9f9;
+      border: 1px solid #51b5d6;
+      border-radius: 6px;
+    }
+
+    .entry-label {
+      font-weight: bold;
+      background: #ddd;
+      padding: 10px 12px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    input[type="submit"] {
+      background-color: #000;
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      margin-top: 24px;
+      cursor: pointer;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #333;
+    }
+
+    .message {
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 6px;
+      display: none;
+    }
+
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+
+    /* Collapsible section styles */
+    .collapsible-section {
+      margin-top: 24px;
+    }
+
+    .collapsible-toggle {
+      background-color: #f0f0f0;
+      border: 2px solid #51b5d6;
+      border-radius: 6px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      padding: 14px 18px;
+      color: #333;
+      width: 100%;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      transition: background 0.3s ease;
+    }
+
+    .collapsible-toggle:hover {
+      background-color: #e0f3fb;
+    }
+
+    .collapsible-toggle .chevron {
+      display: inline-block;
+      margin-right: 10px;
+      transition: transform 0.3s ease;
+    }
+
+    .collapsible-toggle.open .chevron {
+      transform: rotate(90deg);
+    }
+
+    .collapsible-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease, padding 0.3s ease;
+      padding: 0 4px;
+    }
+
+    .collapsible-content.open {
+      max-height: 3000px;
+      padding: 20px 4px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎵 Share Your Records</h1>
+
+  <form id="recordForm">
+    <label for="name">Your Name</label>
+    <input type="text" id="name" name="name" required />
+
+    <label for="email">Your Email</label>
+    <input type="email" id="email" name="email" required />
+
+    <!-- Section 1: 10 Essential Albums -->
+    <div class="collapsible-section">
+      <button type="button" id="toggleEssential" class="collapsible-toggle">
+        <span class="chevron">▶</span> 10 Essential Albums
+      </button>
+      <div id="essentialSection" class="collapsible-content"></div>
+    </div>
+
+    <!-- Section 2: 10 Personal Choices -->
+    <div class="collapsible-section">
+      <button type="button" id="togglePersonal" class="collapsible-toggle">
+        <span class="chevron">▶</span> 10 Personal Choices
+      </button>
+      <div id="personalSection" class="collapsible-content"></div>
+    </div>
+
+    <!-- Section 3: 10 60's & 70's Albums -->
+    <div class="collapsible-section">
+      <button type="button" id="toggleSixtiesSeventies" class="collapsible-toggle">
+        <span class="chevron">▶</span> 10 60's & 70's Albums
+      </button>
+      <div id="sixtiesSeventiesSection" class="collapsible-content"></div>
+    </div>
+
+    <!-- Section 4: 10 Ad Hoc -->
+    <div class="collapsible-section">
+      <button type="button" id="toggleAdHoc" class="collapsible-toggle">
+        <span class="chevron">▶</span> 10 Ad Hoc
+      </button>
+      <div id="adHocSection" class="collapsible-content">
+        <label for="adhoc_category"><strong>Ad Hoc Category Name</strong></label>
+        <input type="text" id="adhoc_category" name="adhoc_category" placeholder="e.g. Guilty Pleasures, Live Albums..." />
+      </div>
+    </div>
+
+    <input type="submit" value="Submit" id="submitBtn" />
+  </form>
+
+  <div class="message success" id="successMessage">✅ Submitted successfully!</div>
+  <div class="message error" id="errorMessage">⚠️ Something went wrong. Please try again.</div>
+
+  <script>
+    // Generate 10 album entry fields for a section
+    function generateEntries(sectionKey) {
+      let html = '';
+      for (let i = 1; i <= 10; i++) {
+        html += `
+          <div class="entry">
+            <span class="entry-label">${sectionKey} Album #${i}</span>
+            <input type="text" name="${sectionKey}_artist${i}" placeholder="Artist" />
+            <input type="text" name="${sectionKey}_title${i}" placeholder="Album Title" />
+          </div>
+        `;
+      }
+      return html;
+    }
+
+    // Inject entries into sections
+    document.getElementById('essentialSection').innerHTML = generateEntries("essential");
+    document.getElementById('personalSection').innerHTML = generateEntries("personal");
+    document.getElementById('sixtiesSeventiesSection').innerHTML = generateEntries("sixties");
+    document.getElementById('adHocSection').innerHTML += generateEntries("adhoc");
+
+    // Collapsible toggles
+    function setupToggle(buttonId, sectionId) {
+      const toggleBtn = document.getElementById(buttonId);
+      const section = document.getElementById(sectionId);
+
+      toggleBtn.addEventListener("click", () => {
+        const isOpen = section.classList.toggle("open");
+        toggleBtn.classList.toggle("open", isOpen);
+        toggleBtn.querySelector(".chevron").textContent = isOpen ? "▼" : "▶";
+      });
+    }
+
+    setupToggle("toggleEssential", "essentialSection");
+    setupToggle("togglePersonal", "personalSection");
+    setupToggle("toggleSixtiesSeventies", "sixtiesSeventiesSection");
+    setupToggle("toggleAdHoc", "adHocSection");
+
+    // Validation for required section
+    function isSectionComplete(form, sectionKey) {
+      for (let i = 1; i <= 10; i++) {
+        const artist = form[`${sectionKey}_artist${i}`]?.value.trim();
+        const title = form[`${sectionKey}_title${i}`]?.value.trim();
+        if (!artist || !title) return false;
+      }
+      return true;
+    }
+
+    // Check if any entries exist in Ad Hoc
+    function isAnyAdHocFilled(form) {
+      for (let i = 1; i <= 10; i++) {
+        const artist = form[`adhoc_artist${i}`]?.value.trim();
+        const title = form[`adhoc_title${i}`]?.value.trim();
+        if (artist || title) return true;
+      }
+      return false;
+    }
+
+    // Form submission
+    document.getElementById("recordForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const successMsg = document.getElementById("successMessage");
+      const errorMsg = document.getElementById("errorMessage");
+      const submitBtn = document.getElementById("submitBtn");
+
+      successMsg.style.display = "none";
+      errorMsg.style.display = "none";
+
+      if (!isSectionComplete(this, "essential")) {
+        errorMsg.textContent = "Please fill in all 10 albums in '10 Essential Albums'.";
+        errorMsg.style.display = "block";
+        return;
+      }
+
+      if (!isSectionComplete(this, "personal")) {
+        errorMsg.textContent = "Please fill in all 10 albums in '10 Personal Choices'.";
+        errorMsg.style.display = "block";
+        return;
+      }
+
+      const adHocUsed = isAnyAdHocFilled(this);
+      const category = this["adhoc_category"]?.value.trim();
+
+      if (adHocUsed && !category) {
+        errorMsg.textContent = "Please name your Ad Hoc category.";
+        errorMsg.style.display = "block";
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.value = "Submitting...";
+
+      const formData = new FormData(this);
+
+      try {
+        const response = await fetch("https://script.google.com/macros/s/AKfycbyoo9zun7uOhTO2bCeBiMED0yUyy4aJoQTogg5sGsQ0jR54oAbdpCWbgop2k5pskn6pPQ/exec", {
+          method: "POST",
+          body: formData
+        });
+
+        if (response.ok) {
+          successMsg.style.display = "block";
+          this.reset();
+        } else {
+          errorMsg.style.display = "block";
+        }
+      } catch (err) {
+        console.error(err);
+        errorMsg.style.display = "block";
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.value = "Submit";
+      }
+    });
+  </script>
+</body>
+</html>
