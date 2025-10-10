@@ -185,136 +185,87 @@
   </form>
 
   <div class="message success" id="successMessage">✅ Submitted successfully!</div>
-  <div class="message error" id="errorMessage">⚠️ Something went wrong. Please try again.</div>
+  <div class="message error" id="errorMessage"⚠️ Something went wrong. Please try again.</div>
 
- <script>
-  // Generate 10 album entry fields for a section
-  function generateEntries(sectionKey) {
-    let html = '';
-    for (let i = 1; i <= 10; i++) {
-      html += `
-        <div class="entry">
-          <span class="entry-label">${sectionKey} Album #${i}</span>
-          <input type="text" name="${sectionKey}_artist${i}" placeholder="Artist" />
-          <input type="text" name="${sectionKey}_title${i}" placeholder="Album Title" />
-        </div>
-      `;
-    }
-    return html;
-  }
-
-  // Inject entries into sections
-  document.getElementById('essentialSection').innerHTML = generateEntries("essential");
-  document.getElementById('personalSection').innerHTML = generateEntries("personal");
-  document.getElementById('sixtiesSeventiesSection').innerHTML = generateEntries("sixties");
-  document.getElementById('adHocSection').innerHTML += generateEntries("adhoc");
-
-  // Collapsible toggles
-  function setupToggle(buttonId, sectionId) {
-    const toggleBtn = document.getElementById(buttonId);
-    const section = document.getElementById(sectionId);
-
-    toggleBtn.addEventListener("click", () => {
-      const isOpen = section.classList.toggle("open");
-      toggleBtn.classList.toggle("open", isOpen);
-      toggleBtn.querySelector(".chevron").textContent = isOpen ? "▼" : "▶";
-    });
-  }
-
-  setupToggle("toggleEssential", "essentialSection");
-  setupToggle("togglePersonal", "personalSection");
-  setupToggle("toggleSixtiesSeventies", "sixtiesSeventiesSection");
-  setupToggle("toggleAdHoc", "adHocSection");
-
-  // Validation for required section
-  function isSectionComplete(form, sectionKey) {
-    for (let i = 1; i <= 10; i++) {
-      const artist = form[`${sectionKey}_artist${i}`]?.value.trim();
-      const title = form[`${sectionKey}_title${i}`]?.value.trim();
-      if (!artist || !title) return false;
-    }
-    return true;
-  }
-
-  // Check if any entries exist in Ad Hoc
-  function isAnyAdHocFilled(form) {
-    for (let i = 1; i <= 10; i++) {
-      const artist = form[`adhoc_artist${i}`]?.value.trim();
-      const title = form[`adhoc_title${i}`]?.value.trim();
-      if (artist || title) return true;
-    }
-    return false;
-  }
-
-  // Form submission
-  document.getElementById("recordForm").addEventListener("submit", async function (e) {
-    e.preventDefault();
-
-    const successMsg = document.getElementById("successMessage");
-    const errorMsg = document.getElementById("errorMessage");
-    const submitBtn = document.getElementById("submitBtn");
-
-    successMsg.style.display = "none";
-    errorMsg.style.display = "none";
-
-    if (!isSectionComplete(this, "essential")) {
-      errorMsg.textContent = "Please fill in all 10 albums in '10 Essential Albums'.";
-      errorMsg.style.display = "block";
-      return;
-    }
-
-    if (!isSectionComplete(this, "personal")) {
-      errorMsg.textContent = "Please fill in all 10 albums in '10 Personal Choices'.";
-      errorMsg.style.display = "block";
-      return;
-    }
-
-    const adHocUsed = isAnyAdHocFilled(this);
-    const category = this["adhoc_category"]?.value.trim();
-
-    if (adHocUsed && !category) {
-      errorMsg.textContent = "Please name your Ad Hoc category.";
-      errorMsg.style.display = "block";
-      return;
-    }
-
-    submitBtn.disabled = true;
-    submitBtn.value = "Submitting...";
-
-    const form = new FormData(this);
-    const data = new URLSearchParams();
-    for (const [key, value] of form.entries()) {
-      data.append(key, value);
-    }
-
-    try {
-      const response = await fetch("https://script.google.com/macros/s/YOUR_DEPLOYED_SCRIPT_ID/exec", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: data
-      });
-
-      const result = await response.json();
-      if (result.success) {
-        successMsg.style.display = "block";
-        this.reset();
-      } else {
-        console.error(result.error);
-        errorMsg.textContent = "Server error: " + result.error;
-        errorMsg.style.display = "block";
+  <script>
+    // Generate 10 album entry fields for a section
+    function generateEntries(sectionKey) {
+      let html = '';
+      for (let i = 1; i <= 10; i++) {
+        html += `
+          <div class="entry">
+            <span class="entry-label">${sectionKey} Album #${i}</span>
+            <input type="text" name="${sectionKey}_artist${i}" placeholder="Artist" />
+            <input type="text" name="${sectionKey}_title${i}" placeholder="Album Title" />
+          </div>
+        `;
       }
-    } catch (err) {
-      console.error("Fetch error:", err);
-      errorMsg.textContent = "Network error. Please try again.";
-      errorMsg.style.display = "block";
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.value = "Submit";
+      return html;
     }
-  });
-</script>
 
+    // Inject entries into sections
+    document.getElementById('essentialSection').innerHTML = generateEntries("essential");
+    document.getElementById('personalSection').innerHTML = generateEntries("personal");
+    document.getElementById('sixtiesSeventiesSection').innerHTML = generateEntries("sixties");
+    document.getElementById('adHocSection').innerHTML += generateEntries("adhoc");
+
+    // Collapsible toggles
+    function setupToggle(buttonId, sectionId) {
+      const toggleBtn = document.getElementById(buttonId);
+      const section = document.getElementById(sectionId);
+
+      toggleBtn.addEventListener("click", () => {
+        const isOpen = section.classList.toggle("open");
+        toggleBtn.classList.toggle("open", isOpen);
+        toggleBtn.querySelector(".chevron").textContent = isOpen ? "▼" : "▶";
+      });
+    }
+
+    setupToggle("toggleEssential", "essentialSection");
+    setupToggle("togglePersonal", "personalSection");
+    setupToggle("toggleSixtiesSeventies", "sixtiesSeventiesSection");
+    setupToggle("toggleAdHoc", "adHocSection");
+
+    // Removed validation functions for sections and Ad Hoc
+
+    // Form submission without validation
+    document.getElementById("recordForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const successMsg = document.getElementById("successMessage");
+      const errorMsg = document.getElementById("errorMessage");
+      const submitBtn = document.getElementById("submitBtn");
+
+      successMsg.style.display = "none";
+      errorMsg.style.display = "none";
+
+      // No validation before submission
+
+      submitBtn.disabled = true;
+      submitBtn.value = "Submitting...";
+
+      const formData = new FormData(this);
+
+      try {
+        const response = await fetch("https://script.google.com/macros/s/AKfycbzKt8iDiwak3MJ7mLWgm5ZAIUUn60h35zQ340narBEq52y38dvFjpN6QzBjQvVEBPr_/exec", {
+          method: "POST",
+          body: formData
+        });
+
+        if (response.ok) {
+          successMsg.style.display = "block";
+          this.reset();
+        } else {
+          errorMsg.style.display = "block";
+        }
+      } catch (err) {
+        console.error(err);
+        errorMsg.style.display = "block";
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.value = "Submit";
+      }
+    });
+  </script>
 </body>
 </html>
